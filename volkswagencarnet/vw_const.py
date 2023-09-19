@@ -1,7 +1,10 @@
 """Constants for We Connect library."""
 
-BASE_SESSION = "https://msg.volkswagen.de"
-BASE_AUTH = "https://identity.vwgroup.io"
+#BASE_SESSION = "https://msg.volkswagen.de"
+BASE_SESSION = "https://carnet.vw.com"
+#BASE_AUTH = "https://identity.vwgroup.io"
+#https://identity.na.vwgroup.io/signin-service/v1/b680e751-7e1f-4008-8ec1-3a528183d215@apps_vw-dilab_com/login/identifier
+BASE_AUTH = "https://identity.na.vwgroup.io"
 BRAND = "VW"
 COUNTRY = "DE"
 

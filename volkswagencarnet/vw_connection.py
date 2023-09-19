@@ -165,7 +165,7 @@ class Connection:
             self._session_auth_headers = HEADERS_AUTH.copy()
             if self._session_fulldebug:
                 _LOGGER.debug("Requesting openid config")
-            req = await self._session.get(url="https://identity.vwgroup.io/.well-known/openid-configuration")
+            req = await self._session.get(url=f"{BASE_AUTH}/.well-known/openid-configuration")
             if req.status != 200:
                 _LOGGER.debug("OpenId config error")
                 return False
