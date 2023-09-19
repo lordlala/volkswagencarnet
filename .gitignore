@@ -14,3 +14,4 @@ dist
 /volkswagencarnet.iml
 htmlcov
 carnet.vw.com.har
+/volkswagencarnet/__pycache__/*

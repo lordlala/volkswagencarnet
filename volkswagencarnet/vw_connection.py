@@ -27,9 +27,11 @@ from .vw_const import (
     BRAND,
     COUNTRY,
     HEADERS_SESSION,
+    HEADERS_SESSION_NA,
     HEADERS_AUTH,
     BASE_SESSION,
     BASE_AUTH,
+    BASE_AUTH_NA,
     CLIENT,
     XCLIENT_ID,
     XAPPVERSION,
@@ -115,7 +117,7 @@ class Connection:
         await self.set_token("vwg")
         self._session_headers.pop("Content-Type", None)
         loaded_vehicles = await self.get(
-            url=f"https://msg.volkswagen.de/fs-car/usermanagement/users/v1/{BRAND}/{self._session_country}/vehicles"
+            url=f"{BASE_SESSION}/fs-car/usermanagement/users/v1/{BRAND}/{self._session_country}/vehicles"
         )
         # Add Vehicle class object for all VIN-numbers from account
         if loaded_vehicles.get("userVehicles") is not None:
@@ -132,7 +134,7 @@ class Connection:
         await self.update()
         return True
 
-    async def _login(self, client="Legacy"):
+    async def _login(self, client="Legacy", country="DE"):
         """Login function."""
 
         # Helper functions
@@ -161,11 +163,16 @@ class Connection:
         try:
             # Get OpenID config:
             self._clear_cookies()
-            self._session_headers = HEADERS_SESSION.copy()
+            if country == 'NA':
+                self._session_headers = HEADERS_SESSION.copy()
+                url = f"https://{BASE_AUTH}/.well-known/openid-configuration"
+            else:
+                self._session_headers = HEADERS_SESSION_NA.copy()
+                url = f"https://{BASE_AUTH_NA}/signin-service/v1"
             self._session_auth_headers = HEADERS_AUTH.copy()
             if self._session_fulldebug:
                 _LOGGER.debug("Requesting openid config")
-            req = await self._session.get(url="https://identity.vwgroup.io/.well-known/openid-configuration")
+            req = await self._session.get(url=url)
             if req.status != 200:
                 _LOGGER.debug("OpenId config error")
                 return False

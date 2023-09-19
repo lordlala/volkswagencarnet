@@ -1,9 +1,11 @@
 """Constants for We Connect library."""
 
-BASE_SESSION = "https://msg.volkswagen.de"
 BASE_AUTH = "https://identity.vwgroup.io"
+BASE_AUTH_NA = "https://identity.na.vwgroup.io"
+BASE_SESSION = "https://msg.volkswagen.de"
 BRAND = "VW"
 COUNTRY = "DE"
+
 
 # Data used in communication
 CLIENT = {
@@ -45,6 +47,13 @@ HEADERS_SESSION = {
     "X-App-Name": XAPPNAME,
     "User-Agent": USER_AGENT,
     "tokentype": "IDK_TECHNICAL",
+}
+
+HEADERS_SESSION_NA = {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Connection": "keep-alive"
 }
 
 # Used for authentication
