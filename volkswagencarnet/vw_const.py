@@ -29,12 +29,13 @@ CLIENT = {
     },
 }
 
-
+CLIENT_ID_NA = "b680e751-7e1f-4008-8ec1-3a528183d215"
 XCLIENT_ID = "c8fcb3bf-22d3-44b0-b6ce-30eae0a4986f"
 XAPPVERSION = "5.3.2"
 XAPPNAME = "We Connect"
 USER_AGENT = "okhttp/3.14.7"
 APP_URI = "carnet://identity-kit/login"
+APP_URI_NA = "https://carnet.vw.com/login"
 
 # Used when fetching data
 HEADERS_SESSION = {
