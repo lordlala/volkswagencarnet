@@ -214,48 +214,24 @@ class Connection:
                         "redirect_uri": APP_URI_NA,
                         "prompt": "login",
                         #"nonce": getNonce(),
-                        #"state": getNonce(),
-                        "state": "xxe6vyVt9iSUIY2FKMG5VE",
+                        "state": getNonce(),
                         #"code_challenge_method": "s256",
-                        #"code_challenge": challenge.decode(),
-                        #"response_type": CLIENT[client].get("TOKEN_TYPES"),
-                        "response_type": "code",
-                        #"client_id": CLIENT[client].get("CLIENT_ID"),
-                        "client_id": "fa9f02a5-2625-42ae-b599-5f0cde83a910@apps_vw-dilab_com",
-                        #"scope": CLIENT[client].get("SCOPE"),
-                        #"scope": 'openid profile email',
+                        "code_challenge": challenge.decode(),
+                        "response_type": 'code',
+                        "client_id": CLIENT[client].get("CLIENT_ID_NA"),
+                        "scope": 'openid',
+                        "ui_locales": "en-US",
                     }
-                headers = {
-                    #":authority:": "b-h-s.spr.us00.p.con-veh.net",
-                    #":method:": "GET",
-                    #":path:": "/oidc/v1/authorize?prompt=login&client_id=fa9f02a5-2625-42ae-b599-5f0cde83a910%40apps_vw-dilab_com&response_type=code&redirect_uri=https%3A%2F%2Fcarnet.vw.com%2Flogin&state=xxe6vyVt9iSUIY2FKMG5VE&scope=openid%20profile%20email",
-                    ":scheme:": "https:",
-                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-                    "Accept-Encoding": "gzip, deflate, br",
-                    "Accept-Language": "en-US,en;q=0.9",
-                    "Dnt": "1",
-                    "Referer": "https://carnet.vw.com/",
-                    "Sec-Ch-Ua": '"Microsoft Edge";v="117", "Not;A=Brand";v="8", "Chromium";v="117"',
-                    "Sec-Ch-Ua-Mobile": "?0",
-                    "Sec-Ch-Ua-Platform": '"Windows"',
-                    "Sec-Fetch-Dest": "document",
-                    "Sec-Fetch-Mode": "navigate",
-                    "Sec-Fetch-Site": "cross-site",
-                    "Sec-Fetch-User": "?1",
-                    "Upgrade-Insecure-Requests": "1",
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.31",
-                }
+                    self._session_auth_headers = HEADERS_SESSION_NA
+
                 req = await self._session.get(
                     url=authorization_endpoint,
                     #headers=self._session_auth_headers,
-                    headers=headers,
+                    headers=self._session_auth_headers,
                     allow_redirects=False,
                     params=params
                 )
-                if self._session_country == "DE":
-                    url_obj = "Location"
-                else:
-                    url_obj = ""
+
                 if req.headers.get("Location", False):
                     ref = urljoin(authorization_endpoint, req.headers.get("Location", ""))
                     if "error" in ref:

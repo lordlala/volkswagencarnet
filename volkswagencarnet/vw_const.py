@@ -12,6 +12,8 @@ CLIENT = {
     "Legacy": {
         "CLIENT_ID": "9496332b-ea03-4091-a224-8c746b885068@apps_vw-dilab_com",
         # client id for VWG API, legacy Skoda Connect/MySkoda
+        "CLIENT_ID_NA": "720b402a-0348-489d-9ae9-eedbe24c1d88_MYVW_IOS",
+        # client id for VWG API, legacy North America
         "SCOPE": "openid mbb profile cars address email birthdate nickname phone",
         # 'SCOPE': 'openid mbb profile cars address email birthdate badge phone driversLicense dealers profession vin',
         "TOKEN_TYPES": "code id_token token",
@@ -35,7 +37,7 @@ XAPPVERSION = "5.3.2"
 XAPPNAME = "We Connect"
 USER_AGENT = "okhttp/3.14.7"
 APP_URI = "carnet://identity-kit/login"
-APP_URI_NA = "https://carnet.vw.com/login"
+APP_URI_NA = "kombi:///login"
 
 # Used when fetching data
 HEADERS_SESSION = {
@@ -50,11 +52,15 @@ HEADERS_SESSION = {
     "tokentype": "IDK_TECHNICAL",
 }
 
+# Used when fetching data. North America
 HEADERS_SESSION_NA = {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-    "Accept-Encoding": "gzip, deflate, br",
-    "Accept-Language": "en-US,en;q=0.9",
-    "Connection": "keep-alive"
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "accept-encoding": "gzip, deflate, br",
+    #"sec-fetch-site": "none",
+    #"sec-fetch-mode": "navigate",
+    "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+    "accept-language": "en-US,en;q=0.9",
+    #"sec-fetch-dest": "document"
 }
 
 # Used for authentication
