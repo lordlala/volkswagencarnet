@@ -180,6 +180,7 @@ class Connection:
             response_data = await req.json()
             authorization_endpoint = response_data["authorization_endpoint"]
             auth_issuer = response_data["issuer"]
+            apigw_requestid = req.headers.get("apigw-requestid")
 
             # Get authorization page (login page)
             # https://identity.vwgroup.io/oidc/v1/authorize?nonce={NONCE}&state={STATE}&response_type={TOKEN_TYPES}&scope={SCOPE}&redirect_uri={APP_URI}&client_id={CLIENT_ID}
@@ -211,7 +212,7 @@ class Connection:
                 else:
                     #from requests.utils import quote
                     params={
-                        "redirect_uri": APP_URI_NA,
+                        "redirect_uri": "https://carnet.vw.com/login",
                         "prompt": "login",
                         #"nonce": getNonce(),
                         "state": getNonce(),
@@ -229,6 +230,8 @@ class Connection:
                 self._session_auth_headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
 
                 req = await self._session.get(
+                    #url=authorization_endpoint,
+                    url='https://b-h-s.spr.us00.p.con-veh.net/oidc/v1/authorize',
                     #url=authorization_endpoint,
                     url='https://b-h-s.spr.us00.p.con-veh.net/oidc/v1/authorize',
                     #headers=self._session_auth_headers,
@@ -281,6 +284,8 @@ class Connection:
 
             if req.status != 200:
                 raise Exception("Fetching authorization endpoint failed")
+            elif req.status == 302:
+                pass
             else:
                 _LOGGER.debug("Got authorization endpoint")
             try:
@@ -339,8 +344,10 @@ class Connection:
             _LOGGER.debug("Authenticating with email and password.")
             if self._session_fulldebug:
                 _LOGGER.debug(f'Using login action url: "{pw_url}"')
+            #url = 'https://b-h-s.spr.us00.p.con-veh.net/oidc/v1/authorize'
             req = await self._session.post(
                 url=pw_url, headers=self._session_auth_headers, data=pw_form, allow_redirects=False
+                #url=url, headers=self._session_auth_headers, data=pw_form, allow_redirects=False
             )
             _LOGGER.debug("Parsing login response.")
             # Follow all redirects until we get redirected back to "our app"
