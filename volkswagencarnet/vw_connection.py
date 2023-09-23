@@ -198,7 +198,7 @@ class Connection:
 
                 if self._session_country == "DE":
                     params={
-                        "redirect_uri": APP_URI_NA,
+                        "redirect_uri": APP_URI,
                         "prompt": "login",
                         "nonce": getNonce(),
                         "state": getNonce(),
@@ -219,13 +219,18 @@ class Connection:
                         "code_challenge": challenge.decode(),
                         "response_type": 'code',
                         "client_id": CLIENT[client].get("CLIENT_ID_NA"),
-                        "scope": 'openid',
+                        "scope": CLIENT[client].get("SCOPE"),
                         "ui_locales": "en-US",
                     }
                     self._session_auth_headers = HEADERS_SESSION_NA
 
+
+
+                self._session_auth_headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+
                 req = await self._session.get(
-                    url=authorization_endpoint,
+                    #url=authorization_endpoint,
+                    url='https://b-h-s.spr.us00.p.con-veh.net/oidc/v1/authorize',
                     #headers=self._session_auth_headers,
                     headers=self._session_auth_headers,
                     allow_redirects=False,
@@ -254,6 +259,26 @@ class Connection:
             except Exception as error:
                 _LOGGER.warning("Failed to get authorization endpoint")
                 raise error
+
+            if req.status != 302:
+                raise Exception("Fetching authorization endpoint failed")
+            else:
+                _LOGGER.debug("Got authorization endpoint")
+
+            try:
+                #ref = req.headers.get("Location")
+                ref = urljoin(authorization_endpoint, req.headers.get("Location", ""))
+                params = {
+                    'relayState': getNonce()
+                }
+
+                req = await self._session.get(
+                    url=ref, headers=self._session_auth_headers, allow_redirects=False
+                )
+            except Exception as error:
+                _LOGGER.warning("Failed to get authorization endpoint")
+                raise error
+
             if req.status != 200:
                 raise Exception("Fetching authorization endpoint failed")
             else:
@@ -357,16 +382,33 @@ class Connection:
             _LOGGER.debug("Login successful, received authorization code.")
 
             # Extract code and tokens
-            parsed_qs = parse_qs(urlparse(ref).fragment)
-            jwt_auth_code = parsed_qs["code"][0]
-            jwt_id_token = parsed_qs["id_token"][0]
+
+            try:
+                parsed_qs = parse_qs(urlparse(ref).fragment)
+                jwt_auth_code = parsed_qs["code"][0]
+                jwt_id_token = parsed_qs["id_token"][0]
+                jwt_ui_locales = ""
+            except Exception as error:
+                ref = ref.replace('///','//')
+                parsed_qs = parse_qs((urlparse(ref)[4]))
+                jwt_auth_code = parsed_qs["code"][0]
+                jwt_id_token = parsed_qs["state"][0]
+                jwt_ui_locales = parsed_qs["ui_locales"][0]
+
             # Exchange Auth code and id_token for new tokens with refresh_token (so we can easier fetch new ones later)
-            token_body = {
-                "auth_code": jwt_auth_code,
-                "id_token": jwt_id_token,
-                "code_verifier": code_verifier.decode(),
-                "brand": BRAND,
-            }
+            if COUNTRY == 'DE':
+                token_body = {
+                    "auth_code": jwt_auth_code,
+                    "id_token": jwt_id_token,
+                    "code_verifier": code_verifier.decode(),
+                    "brand": BRAND,
+                }
+            else:
+                token_body = {
+                    "state": jwt_auth_code,
+                    "code": jwt_auth_code,
+                    "ui_locales": jwt_ui_locales
+                }
             _LOGGER.debug("Trying to fetch user identity tokens.")
             token_url = "https://tokenrefreshservice.apps.emea.vwapps.io/exchangeAuthCode"
             req = await self._session.post(
